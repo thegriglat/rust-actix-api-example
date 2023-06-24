@@ -7,14 +7,16 @@ pub async fn get_link(path: web::Path<String>, data: web::Data<AppState>) -> imp
     let short_link = path.into_inner();
 
     match data.get(&short_link) {
-        Some(full_link) => HttpResponse::Ok().json(ShortenedLink::new(full_link)),
-        None => HttpResponse::NotFound().body(""),
+        Ok(full_link) => HttpResponse::Ok().json(ShortenedLink::new(full_link)),
+        Err(error) => HttpResponse::NotFound().json(error),
     }
 }
 
 #[post("/")]
 pub async fn post_link(data: web::Data<AppState>, json: web::Json<UrlRequest>) -> impl Responder {
     let url = json.url.clone();
-    let short_url = data.add(url);
-    HttpResponse::Ok().json(UrlRequest::new(short_url))
+    match data.add(url) {
+        Ok(short_url) => HttpResponse::Ok().json(UrlRequest::new(short_url)),
+        Err(error) => HttpResponse::NotFound().json(error),
+    }
 }

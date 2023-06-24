@@ -5,6 +5,7 @@ use state::AppState;
 
 mod api;
 mod config;
+mod errors;
 mod state;
 
 #[actix_web::main]

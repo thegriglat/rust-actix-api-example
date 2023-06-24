@@ -18,6 +18,7 @@ async fn main() -> std::io::Result<()> {
         )
     })
     .bind(("127.0.0.1", config.port))?
+    .workers(config.workers)
     .run()
     .await
 }

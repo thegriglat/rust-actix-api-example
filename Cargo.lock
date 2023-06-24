@@ -799,6 +799,7 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "dotenv",
+ "num_cpus",
  "serde",
  "serde_json",
 ]

@@ -13,19 +13,16 @@ impl AppState {
         }
     }
 
-    pub fn add(self: &Self, url: String) -> String {
+    pub fn add(&self, url: String) -> String {
         let mut data = self.links.lock().expect("Cannot get access to mutex");
         let short_url = Uuid::new_v4().to_string();
-        data.insert(short_url.to_string(), url.clone());
+        data.insert(short_url.to_string(), url);
         short_url
     }
 
-    pub fn get(self: &Self, short_url: &String) -> Option<String> {
+    pub fn get(&self, short_url: &String) -> Option<String> {
         let data = self.links.lock().expect("Cannot get access to mutex");
         let value = data.get(short_url);
-        match value {
-            Some(v) => Some(v.clone()),
-            None => None,
-        }
+        value.cloned()
     }
 }

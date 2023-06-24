@@ -5,6 +5,7 @@ use actix_web::{get, post, web, HttpResponse, Responder};
 #[get("/{short_link}")]
 pub async fn get_link(path: web::Path<String>, data: web::Data<AppState>) -> impl Responder {
     let short_link = path.into_inner();
+
     match data.get(&short_link) {
         Some(full_link) => HttpResponse::Ok().json(ShortenedLink::new(full_link)),
         None => HttpResponse::NotFound().body(""),

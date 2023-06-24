@@ -3,13 +3,14 @@ use config::Config;
 use dotenv::dotenv;
 
 mod config;
+mod routes;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
     let config = Config::read();
-    HttpServer::new(|| App::new())
+    HttpServer::new(|| App::new().service(routes::auth::authorization::get_jwt_token))
         .bind(("127.0.0.1", config.port))?
         .run()
         .await

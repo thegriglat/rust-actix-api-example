@@ -1,8 +1,6 @@
-use std::{collections::HashMap, sync::Mutex};
-
-use uuid::Uuid;
-
 use crate::errors::AppError;
+use std::{collections::HashMap, sync::Mutex};
+use uuid::Uuid;
 
 pub struct AppState {
     links: Mutex<HashMap<String, String>>,

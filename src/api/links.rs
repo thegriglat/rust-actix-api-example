@@ -16,7 +16,7 @@ pub async fn get_link(path: web::Path<String>, data: web::Data<AppState>) -> imp
 pub async fn post_link(data: web::Data<AppState>, json: web::Json<UrlRequest>) -> impl Responder {
     let url = json.url.clone();
     match data.add(url) {
-        Ok(short_url) => HttpResponse::Ok().json(UrlRequest::new(short_url)),
+        Ok(short_url) => HttpResponse::Ok().json(ShortenedLink::new(short_url)),
         Err(error) => HttpResponse::NotFound().json(error),
     }
 }

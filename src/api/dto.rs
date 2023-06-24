@@ -11,15 +11,7 @@ impl ShortenedLink {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct UrlRequest {
     pub url: String,
-}
-
-impl UrlRequest {
-    pub fn new(url: String) -> Self {
-        UrlRequest {
-            url: format!("/{}", url),
-        }
-    }
 }

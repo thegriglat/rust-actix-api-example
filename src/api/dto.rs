@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-pub struct ShortenedLink {
+pub struct LinkDto {
     pub url: String,
 }
 
-impl ShortenedLink {
+impl LinkDto {
     pub fn new(url: String) -> Self {
-        ShortenedLink { url }
+        Self { url }
     }
 }
 

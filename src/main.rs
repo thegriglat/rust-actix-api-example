@@ -1,12 +1,18 @@
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use config::Config;
+use diesel::{
+    r2d2::{self, ConnectionManager},
+    SqliteConnection,
+};
 use dotenv::dotenv;
-use state::AppState;
 
 mod api;
 mod config;
+mod db;
 mod errors;
-mod state;
+mod models;
+
+pub type Pool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -14,9 +20,14 @@ async fn main() -> std::io::Result<()> {
 
     let config = Config::read();
 
+    let manager = ConnectionManager::<SqliteConnection>::new(config.database_url);
+    let pool: Pool = r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create pool.");
+
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
-    let app_data = web::Data::new(AppState::new());
+    let app_data = web::Data::new(pool.clone());
     HttpServer::new(move || {
         App::new()
             .app_data(app_data.clone())

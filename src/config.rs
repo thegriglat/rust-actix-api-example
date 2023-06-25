@@ -5,6 +5,7 @@ use dotenv::dotenv;
 pub struct Config {
     pub port: u16,
     pub workers: usize,
+    pub database_url: String,
 }
 
 impl Config {
@@ -12,8 +13,15 @@ impl Config {
         dotenv().ok();
         let port = Config::port();
         let workers = Config::workers();
+        let database_url = Config::database_url();
 
-        Config { port, workers }
+        let config = Config {
+            port,
+            workers,
+            database_url,
+        };
+        config.dump();
+        config
     }
 
     fn port() -> u16 {
@@ -28,10 +36,14 @@ impl Config {
             Some(value) => value.parse::<usize>().expect("Cannot parse WORKERS"),
             None => {
                 let cpus = num_cpus::get_physical();
-                println!("Cannot parse WORKERS variable. Use number of CPU: {}", cpus);
+                println!("Cannot parse WORKERS variable. Will use all available CPUs ()");
                 cpus
             }
         }
+    }
+
+    fn database_url() -> String {
+        Config::get_env_var("DATABASE_URL").expect("DATABASE_URL not set")
     }
 
     fn get_env_var(key: &str) -> Option<String> {
@@ -39,5 +51,11 @@ impl Config {
             Some(pair) => Some(pair.1),
             None => None,
         }
+    }
+
+    fn dump(&self) {
+        println!("Current config:");
+        println!("  PORT:    {}", self.port);
+        println!("  WORKERS: {}", self.workers);
     }
 }

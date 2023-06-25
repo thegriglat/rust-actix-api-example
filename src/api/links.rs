@@ -7,11 +7,11 @@ use crate::Pool;
 use actix_web::{get, post, web, HttpResponse, Responder};
 use actix_web_validator::Json;
 use anyhow::{anyhow, Result};
+use bs58;
 use diesel::insert_into;
 use diesel::prelude::*;
 use diesel::result::Error::NotFound;
 use diesel::QueryDsl;
-use uuid::Uuid;
 
 #[get("/{short_link}")]
 pub async fn get_link<'a>(path: web::Path<String>, pool: web::Data<Pool>) -> impl Responder {
@@ -45,9 +45,20 @@ fn get_link_db(shorten_url: &str, pool: web::Data<Pool>) -> Result<Url> {
 
 fn add_link_db(full_url: &str, pool: web::Data<Pool>) -> Result<Url> {
     let conn = &mut pool.get()?;
+
+    let shorten_url = get_short_link(full_url);
+
+    let db_row = get_link_db(&shorten_url, pool);
+    if db_row.is_ok() {
+        return Ok(Url {
+            url: full_url.to_owned(),
+            short_url: shorten_url,
+        });
+    }
+
     let new_url = Url {
         url: full_url.to_owned(),
-        short_url: Uuid::new_v4().to_string(),
+        short_url: get_short_link(full_url),
     };
 
     insert_into(urls)
@@ -55,4 +66,10 @@ fn add_link_db(full_url: &str, pool: web::Data<Pool>) -> Result<Url> {
         .execute(conn)
         .map(|_| new_url)
         .map_err(|err| anyhow!(err))
+}
+
+fn get_short_link(str: &str) -> String {
+    // 128 bits = 16 u8
+    let digest: Vec<u8> = md5::compute(str).to_vec().into_iter().take(4).collect();
+    bs58::encode(digest).into_string()
 }

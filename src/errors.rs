@@ -1,6 +1,8 @@
 use serde::Serialize;
 use std::collections::HashMap;
 
+use anyhow::{anyhow, Result as AnyhowResult};
+
 #[derive(Serialize)]
 pub struct AppError {
     message: String,
@@ -14,6 +16,12 @@ impl AppError {
         Self {
             message: error_message.into(),
         }
+    }
+}
+
+impl From<anyhow::Error> for AppError {
+    fn from(value: anyhow::Error) -> Self {
+        AppError::new(value.to_string())
     }
 }
 
@@ -46,5 +54,12 @@ impl From<&validator::ValidationErrors> for ValidationErrorResponse {
         ValidationErrorResponse {
             messages: error_map,
         }
+    }
+}
+
+pub fn anyhow<T, E: Into<anyhow::Error>>(result: Result<T, E>) -> AnyhowResult<T> {
+    match result {
+        Ok(v) => Ok(v),
+        Err(err) => Err(anyhow!(err)),
     }
 }

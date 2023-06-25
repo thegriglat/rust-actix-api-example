@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 #[derive(Serialize, Deserialize)]
 pub struct LinkDto {
@@ -11,7 +12,8 @@ impl LinkDto {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Validate)]
 pub struct UrlRequest {
+    #[validate(url(message = "Value must be url"))]
     pub url: String,
 }

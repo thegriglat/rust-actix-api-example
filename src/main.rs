@@ -45,8 +45,11 @@ async fn main() -> std::io::Result<()> {
                         messages: HashMap::new(),
                     },
                 };
-                error::InternalError::from_response(err, HttpResponse::Conflict().json(json_error))
-                    .into()
+                error::InternalError::from_response(
+                    err,
+                    HttpResponse::BadRequest().json(json_error),
+                )
+                .into()
             }))
             .service(api::links::get_link)
             .service(api::links::post_link)

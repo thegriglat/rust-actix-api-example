@@ -1,14 +1,15 @@
 use self::db::schema::urls::dsl::*;
 use super::dto::*;
 use crate::db;
-use crate::errors::{anyhow, AppError};
+use crate::errors::AppError;
 use crate::models::url::Url;
 use crate::Pool;
 use actix_web::{get, post, web, HttpResponse, Responder};
 use actix_web_validator::Json;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use diesel::insert_into;
 use diesel::prelude::*;
+use diesel::result::Error::NotFound;
 use diesel::QueryDsl;
 use uuid::Uuid;
 
@@ -34,7 +35,12 @@ pub async fn post_link<'a>(pool: web::Data<Pool>, json: Json<UrlRequest>) -> imp
 
 fn get_link_db(shorten_url: &str, pool: web::Data<Pool>) -> Result<Url> {
     let conn = &mut pool.get()?;
-    anyhow(urls.find(shorten_url).first::<Url>(conn))
+    urls.find(shorten_url)
+        .first::<Url>(conn)
+        .map_err(|err| match err {
+            NotFound => anyhow!("Url not found"),
+            err => anyhow!(err),
+        })
 }
 
 fn add_link_db(full_url: &str, pool: web::Data<Pool>) -> Result<Url> {
@@ -44,10 +50,9 @@ fn add_link_db(full_url: &str, pool: web::Data<Pool>) -> Result<Url> {
         short_url: Uuid::new_v4().to_string(),
     };
 
-    anyhow(
-        insert_into(urls)
-            .values(&new_url)
-            .execute(conn)
-            .map(|_| new_url),
-    )
+    insert_into(urls)
+        .values(&new_url)
+        .execute(conn)
+        .map(|_| new_url)
+        .map_err(|err| anyhow!(err))
 }

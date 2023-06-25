@@ -1,6 +1,8 @@
 # rust-link-shortener
 Simple REST-api written in Rust
 
+It was started as education pet project but maybe it will be useful for you.
+
 
 # How to start
 

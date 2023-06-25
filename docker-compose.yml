@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  api:
+    container_name: api
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: api
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - ./db.sqlite:/app/db.sqlite:rw
+    env_file:
+      - .env
+    networks:
+      - inner
+
+networks:
+  inner:

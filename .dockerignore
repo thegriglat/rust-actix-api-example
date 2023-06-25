@@ -1,0 +1,13 @@
+.env
+migrations
+diesel.toml
+.github
+Dockerfile
+docker-compose.yml
+.git
+.gitignore
+.dockerignore
+*.sqlite
+target
+README.md
+LICENSE

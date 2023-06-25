@@ -8,10 +8,26 @@ services:
       context: ./
       dockerfile: Dockerfile
       target: api
+    env_file:
+      - .env
     ports:
       - "${PORT}:${PORT}"
     volumes:
-      - ./db.sqlite:/app/db.sqlite:rw
+      - db:/db/
+    networks:
+      - inner
+    depends_on:
+      - api-migrations
+
+  api-migrations:
+    container_name: api-migrations
+    restart: "no"
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: api-migrations
+    volumes:
+      - db:/db/
     env_file:
       - .env
     networks:
@@ -19,3 +35,7 @@ services:
 
 networks:
   inner:
+
+
+volumes:
+  db:

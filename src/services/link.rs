@@ -47,3 +47,15 @@ fn shortify(str: &str) -> String {
     let digest: Vec<u8> = md5::compute(str).iter().copied().take(4).collect();
     bs58::encode(digest).into_string()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::shortify;
+
+    #[test]
+    fn shortify_symbols() {
+        let input = "https://google.com";
+        let shortified = shortify(input);
+        assert_eq!(shortified.len(), 6);
+    }
+}

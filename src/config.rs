@@ -2,6 +2,7 @@ use std::env;
 
 use dotenv::dotenv;
 
+#[derive(Debug)]
 pub struct Config {
     pub port: u16,
     pub workers: usize,
@@ -36,7 +37,10 @@ impl Config {
             Some(value) => value.parse::<usize>().expect("Cannot parse WORKERS"),
             None => {
                 let cpus = num_cpus::get_physical();
-                println!("Cannot parse WORKERS variable. Will use all available CPUs ()");
+                println!(
+                    "Cannot parse WORKERS variable. Will use all available CPUs ({})",
+                    cpus
+                );
                 cpus
             }
         }
@@ -54,8 +58,6 @@ impl Config {
     }
 
     fn dump(&self) {
-        println!("Current config:");
-        println!("  PORT:    {}", self.port);
-        println!("  WORKERS: {}", self.workers);
+        println!("{:#?}", self);
     }
 }

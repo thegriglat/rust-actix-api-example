@@ -14,6 +14,9 @@ cargo install diesel_cli --no-default-features --features postgres
 # set DB_HOST=localhost in .env file
 $EDITOR .env
 
+# run database container
+docker-compose up -d db
+
 # run migrations
 diesel setup
 

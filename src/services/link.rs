@@ -44,6 +44,6 @@ pub fn create(full_url: &str, pool: web::Data<Pool>) -> Result<Url> {
 
 fn shortify(str: &str) -> String {
     // 128 bits = 16 u8
-    let digest: Vec<u8> = md5::compute(str).to_vec().into_iter().take(4).collect();
+    let digest: Vec<u8> = md5::compute(str).iter().copied().take(4).collect();
     bs58::encode(digest).into_string()
 }

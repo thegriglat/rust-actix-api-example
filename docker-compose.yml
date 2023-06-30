@@ -12,11 +12,10 @@ services:
       - .env
     ports:
       - "${PORT}:${PORT}"
-    volumes:
-      - db:/db/
     networks:
       - inner
     depends_on:
+      - db
       - api-migrations
 
   api-migrations:
@@ -25,11 +24,25 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-      target: api-migrations
+      target: diesel
     volumes:
-      - db:/db/
-    env_file:
-      - .env
+      - ./:/app
+    networks:
+      - inner
+    depends_on:
+      - db
+
+  db:
+    container_name: apidb
+    image: postgres:alpine
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
     networks:
       - inner
 
@@ -39,3 +52,4 @@ networks:
 
 volumes:
   db:
+    name: rest-api-db

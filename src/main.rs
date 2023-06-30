@@ -5,7 +5,7 @@ use actix_web_validator::JsonConfig;
 use config::Config;
 use diesel::{
     r2d2::{self, ConnectionManager},
-    SqliteConnection,
+    PgConnection,
 };
 use errors::ValidationErrorResponse;
 
@@ -15,13 +15,13 @@ mod db;
 mod errors;
 mod models;
 
-pub type Pool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
+pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let config = Config::read();
 
-    let manager = ConnectionManager::<SqliteConnection>::new(config.database_url);
+    let manager = ConnectionManager::<PgConnection>::new(config.database_url);
     let pool: Pool = r2d2::Pool::builder()
         .build(manager)
         .expect("Failed to create pool.");
@@ -55,7 +55,7 @@ async fn main() -> std::io::Result<()> {
             .service(api::links::post_link)
             .wrap(Logger::default())
     })
-    .bind(("127.0.0.1", config.port))?
+    .bind(("0.0.0.0", config.port))?
     .workers(config.workers)
     .run()
     .await

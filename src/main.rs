@@ -14,6 +14,7 @@ mod config;
 mod db;
 mod errors;
 mod models;
+mod services;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 

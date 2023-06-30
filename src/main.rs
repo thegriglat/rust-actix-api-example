@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, net::Ipv4Addr};
 
 use actix_web::{error, middleware::Logger, web, App, HttpResponse, HttpServer};
 use actix_web_validator::JsonConfig;
@@ -8,6 +8,8 @@ use diesel::{
     PgConnection,
 };
 use errors::ValidationErrorResponse;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 mod api;
 mod config;
@@ -15,6 +17,7 @@ mod db;
 mod errors;
 mod models;
 mod services;
+mod swagger;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
@@ -52,11 +55,21 @@ async fn main() -> std::io::Result<()> {
                 )
                 .into()
             }))
-            .service(api::links::get_link)
-            .service(api::links::post_link)
+            .service(
+                SwaggerUi::new("/swagger-ui/{_:.*}")
+                    .url("/api-docs/openapi.json", swagger::ApiDoc::openapi()),
+            )
+            .service(
+                web::scope("api").service(
+                    web::scope("links")
+                        .service(api::links::get_link)
+                        .service(api::links::post_link),
+                ),
+            )
             .wrap(Logger::default())
     })
-    .bind(("0.0.0.0", config.port))?
+    .bind((Ipv4Addr::UNSPECIFIED, config.port))
+    .unwrap()
     .workers(config.workers)
     .run()
     .await

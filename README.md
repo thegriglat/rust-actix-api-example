@@ -22,6 +22,8 @@ diesel setup
 
 # run Rust HTTP server (use --release to run production build)
 cargo run
+
+# Swagger will be available on http://localhost:8080/swagger-ui
 ```
 
 # To start API service in Docker

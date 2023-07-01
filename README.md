@@ -37,10 +37,10 @@ docker-compose up
 
 # Test API
 ## POST method
-curl -X POST -H "Content-Type: application/json" http://localhost:8080 -d '{"url": "https://google.com"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/links -d '{"url": "https://google.com"}'
 {"url":"4vihsq"}
 
 ## GET method
-curl http://localhost:8080/4vihsq
+curl http://localhost:8080/api/links/4vihsq
 {"url":"https://google.com"}
 ```

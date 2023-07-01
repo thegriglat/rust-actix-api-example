@@ -1,4 +1,4 @@
-# rust-link-shortener
+# rust-actix-api-example
 Simple REST-api written in Rust using [Actix](https://actix.rs) and [Diesel](https://diesel.rs)
 
 It was started as education pet project, hope it will be useful also for you.

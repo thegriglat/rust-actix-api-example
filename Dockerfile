@@ -11,16 +11,16 @@ RUN cargo build --release
 
 
 ### Runner image
-FROM alpine as api
+FROM alpine as rust-actix-api-example
 WORKDIR /app
 RUN apk add --no-cache libgcc libpq
-COPY --from=app-build /app/target/release/rest-api .
+COPY --from=app-build /app/target/release/rust-actix-api-example .
 
-CMD ["/app/rest-api"]
+CMD ["/app/rust-actix-api-example"]
 
 
 ### migrations image
-FROM rust-build as diesel
+FROM rust-build as rust-actix-api-example-migrations
 WORKDIR /app
 RUN apk add --no-cache libpq libpq-dev
 RUN cargo install diesel_cli --no-default-features --features postgres

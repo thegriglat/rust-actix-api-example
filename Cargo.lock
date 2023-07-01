@@ -1141,6 +1141,7 @@ dependencies = [
  "actix-web-validator",
  "anyhow",
  "bs58",
+ "cfg-if",
  "diesel",
  "dotenv",
  "env_logger",

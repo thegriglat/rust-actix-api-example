@@ -10,6 +10,7 @@ actix-web = "4.3.1"
 actix-web-validator = "5.0.1"
 anyhow = "1.0.71"
 bs58 = "0.5.0"
+cfg-if = "1.0.0"
 diesel = { version = "2.1.0", features = ["postgres", "r2d2"] }
 dotenv = "0.15.0"
 env_logger = "0.10.0"
@@ -17,7 +18,7 @@ md5 = "0.7.0"
 num_cpus = "1.15.0"
 serde = { version = "1.0.164", features = ["derive"] }
 serde_json = "1.0.99"
-utoipa = { version = "3", features = ["actix_extras"] }
+utoipa = { version = "3", features = ["actix_extras"]}
 utoipa-swagger-ui = { version = "3", features = ["actix-web"] }
 validator = { version = "0.16.1", features = ["derive"] }
 
@@ -25,3 +26,7 @@ validator = { version = "0.16.1", features = ["derive"] }
 opt-level = 3
 lto = true
 strip = true
+
+[features]
+default = ["swagger"]
+swagger = []

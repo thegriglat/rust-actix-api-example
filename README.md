@@ -44,3 +44,13 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/links
 curl http://localhost:8080/api/links/4vihsq
 {"url":"https://google.com"}
 ```
+
+# Features
+
+At the moment there id only `swagger` feature (default).
+
+To build application without swagger-ui use `--no-default-features`
+
+```bash
+cargo build --no-default-features
+```

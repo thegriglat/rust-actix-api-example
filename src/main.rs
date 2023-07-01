@@ -8,8 +8,6 @@ use diesel::{
     PgConnection,
 };
 use errors::ValidationErrorResponse;
-use utoipa::OpenApi;
-use utoipa_swagger_ui::SwaggerUi;
 
 mod api;
 mod config;
@@ -25,6 +23,7 @@ pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 async fn main() -> std::io::Result<()> {
     let config = Config::read();
 
+    swagger::swagger_status();
     let manager = ConnectionManager::<PgConnection>::new(config.database_url);
     let pool: Pool = r2d2::Pool::builder()
         .build(manager)
@@ -55,10 +54,7 @@ async fn main() -> std::io::Result<()> {
                 )
                 .into()
             }))
-            .service(
-                SwaggerUi::new("/swagger-ui/{_:.*}")
-                    .url("/api-docs/openapi.json", swagger::ApiDoc::openapi()),
-            )
+            .configure(swagger::configure)
             .service(web::scope("api").configure(api::links::configure))
             .wrap(Logger::default())
     })

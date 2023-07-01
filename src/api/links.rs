@@ -5,6 +5,10 @@ use crate::Pool;
 use actix_web::{get, post, web, HttpResponse, Responder};
 use actix_web_validator::Json;
 
+pub fn configure(cfg: &mut web::ServiceConfig) {
+    cfg.service(web::scope("links").service(get_link).service(post_link));
+}
+
 #[utoipa::path(
     get,
     path = "/api/links/{short_link}",

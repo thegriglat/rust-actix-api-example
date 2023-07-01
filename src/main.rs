@@ -59,13 +59,7 @@ async fn main() -> std::io::Result<()> {
                 SwaggerUi::new("/swagger-ui/{_:.*}")
                     .url("/api-docs/openapi.json", swagger::ApiDoc::openapi()),
             )
-            .service(
-                web::scope("api").service(
-                    web::scope("links")
-                        .service(api::links::get_link)
-                        .service(api::links::post_link),
-                ),
-            )
+            .service(web::scope("api").configure(api::links::configure))
             .wrap(Logger::default())
     })
     .bind((Ipv4Addr::UNSPECIFIED, config.port))

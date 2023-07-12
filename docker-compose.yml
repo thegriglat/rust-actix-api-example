@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   api:
+    image: thegriglat/rust-actix-api-example
     container_name: rust-actix-api-example
     restart: always
     build:
@@ -19,6 +20,7 @@ services:
       - api-migrations
 
   api-migrations:
+    image: thegriglat/rust-actix-api-example-migrations
     container_name: rust-actix-api-example-migrations
     restart: "no"
     build:
